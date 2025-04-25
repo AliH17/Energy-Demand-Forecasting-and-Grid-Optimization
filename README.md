@@ -1,91 +1,114 @@
-# Energy-Demand-Forecasting-and-Grid-Optimization
-Energy Demand Forecasting and Grid Optimization
-This repository contains an end-to-end prototype for forecasting solar and load, and then using reinforcement learning to optimize battery dispatch to minimize grid imports. It includes:
+# ⚡ Energy Demand Forecasting & Grid Optimization
 
-    Data loaders for solar, load, and weather time series.
+A proof-of-concept pipeline for 24 h ahead solar & load forecasting, and RL-based battery dispatch to minimize grid imports. Built with XGBoost, Gymnasium, Stable-Baselines3 DQN and Streamlit.
 
-    Forecasting scripts (run_forecasters.py) that train XGBoost models on historical data and produce 24 h ahead forecasts.
+---
 
-    Gym environment (EnergyEnv) modeling a battery, prosumer load, and solar generation.
+## 📋 Table of Contents
 
-    RL training (train_rl.py) using Stable-Baselines3 DQN to learn a charge/discharge policy.
+- [📖 Overview](#-overview)  
+- [✨ Features](#-features)  
+- [📂 Project Structure](#-project-structure)  
+- [🚀 Getting Started](#-getting-started)  
+  - [1. Clone & Install](#1-clone--install)  
+  - [2. Prepare Data](#2-prepare-data)  
+  - [3. Run Forecasting](#3-run-forecasting)  
+  - [4. Train RL Agent](#4-train-rl-agent)  
+  - [5. Launch Dashboard](#5-launch-dashboard)  
+- [📊 Metrics](#-metrics)  
+- [⚖️ License](#️-license)  
 
-    Streamlit dashboard (app.py) to visualize forecasts and simulated dispatch.
+---
 
-Features
+## 📖 Overview
 
-    Solar & Load Forecasting
+This repository demonstrates an end-to-end workflow for:
 
-        Feature engineering with Fourier terms, lags, rolling windows
+1. **Solar & Load Forecasting** using GPU-accelerated XGBoost  
+2. **Battery Management Environment** (Gymnasium)  
+3. **Reinforcement Learning** (DQN) for charge/discharge policy  
+4. **Interactive Dashboard** (Streamlit) to visualize forecasts, dispatch, and rewards  
 
-        GPU-accelerated XGBoost models
+By combining accurate short-term forecasts with RL, you can intelligently dispatch storage to smooth net grid draw and reduce costs.
 
-        Train/test evaluation with MAE, RMSE, R²
+---
 
-    Battery Management Environment
+## ✨ Features
 
-        State = [normalized solar, normalized load, battery SoC]
+- **Data Loaders**  
+  - `load_solar_data`, `load_load_data`, `load_weather_data`  
+- **Forecasting** (`scripts/run_forecasters.py`)  
+  - Fourier features, lags, rolling-windows  
+  - MAE/RMSE/R² evaluation  
+  - Saves `forecasts_next24h.csv`  
+- **Gym Environment** (`src/envs/energy_env.py`)  
+  - State = [norm_solar, norm_load, batt_level]  
+  - Actions = hold/charge/discharge  
+  - Configurable cycling penalty & incentives  
+- **RL Training** (`scripts/train_rl.py`)  
+  - Stable-Baselines3 DQN + EvalCallback  
+  - Checkpointing & policy sanity-check  
+- **Dashboard** (`app.py`)  
+  - Sidebar controls for penalty & incentive  
+  - Plots: forecasts, battery SoC, net draw, rewards  
 
-        Actions = {hold, charge, discharge}
+---
+![image](https://github.com/user-attachments/assets/9558b1e4-a8bc-4880-8132-37c4ff0fbe4c)
 
-        Reward = –|net grid draw| – cycling penalty (with optional self-consumption incentive)
 
-    Reinforcement Learning
+---
 
-        DQN agent trained on week-long episodes
+## 🚀 Getting Started
 
-        Evaluation callback and model checkpointing
+### 1. Clone & Install
 
-        Sanity-check visualization of cumulative reward
-
-    Interactive Dashboard
-
-        Next-24 h forecasts of load & solar
-
-        Simulated battery level & agent actions
-
-Getting Started
-1. Clone & Install
-
+```bash
 git clone https://github.com/yourusername/energy-grid-rl.git
 cd energy-grid-rl
 python3 -m venv venv
-source venv/bin/activate     # Windows: venv\Scripts\activate
+source venv/bin/activate      # Windows: `venv\Scripts\activate`
 pip install -r requirements.txt
-
 2. Prepare Data
 
-Download and unzip:
+Download and place under data/:
 
-    Solar generation from Kaggle: solar_power_generation_data.csv → data/solar/
+    Solar generation (Kaggle) → data/solar/
 
-    Load consumption from UCI: household_power_consumption.txt → data/load/
+    Household consumption (UCI) → data/load/
 
-    Weather from NOAA GHCN: AE000041196.csv → data/renewables/
+    Weather (NOAA GHCN: station AE000041196) → data/renewables/
 
 3. Run Forecasting
 
 python -m scripts.run_forecasters
-# → prints MAE, RMSE, R² for solar & load; saves forecasts_next24h.csv
 
+Outputs MAE/RMSE/R² for solar & load and writes forecasts_next24h.csv.
 4. Train RL Agent
 
 python -m scripts.train_rl
-# → trains DQN for 50k timesteps, checkpoints under models/, shows sanity-check plot
 
+Trains DQN for 50 k timesteps, saves best models under models/.
 5. Launch Dashboard
 
 streamlit run app.py
 
-Use the sidebar to adjust cycle_penalty and toggle use_incentive, then click Simulate to view forecasts, battery dispatch, net grid draw, and rewards.
-Interpretation of Metrics
+Use the sidebar to tweak cycle_penalty & use_incentive, then Simulate to see:
 
-    MAE (Mean Absolute Error) and RMSE (Root Mean Squared Error) gauge forecast accuracy in kWh or kW.
+    Forecast curves
 
-    R² > 0.8 indicates the model explains over 80 % of the variance in the test data—considered a strong fit for time-series applications.
+    Battery SoC & actions
 
+    Net grid draw
 
+    Cumulative reward
 
-        Net grid draw & cumulative reward plots
+📊 Metrics
 
-        Raw simulation table and reward-shaping controls
+    MAE / RMSE measure absolute and squared forecast errors.
+
+    R² > 0.8 indicates the model explains over 80 % of variance—a strong fit for time series.
+
+⚖️ License
+
+This project is MIT-licensed. See LICENSE for details.
+

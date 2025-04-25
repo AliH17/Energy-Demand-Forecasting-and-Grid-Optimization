@@ -4,23 +4,10 @@ A proof-of-concept pipeline for 24 h ahead solar & load forecasting, and RL-base
 
 ---
 
-## 📋 Table of Contents
-
-- [📖 Overview](#-overview)  
-- [✨ Features](#-features)  
-- [📂 Project Structure](#-project-structure)  
-- [🚀 Getting Started](#-getting-started)  
-  - [1. Clone & Install](#1-clone--install)  
-  - [2. Prepare Data](#2-prepare-data)  
-  - [3. Run Forecasting](#3-run-forecasting)  
-  - [4. Train RL Agent](#4-train-rl-agent)  
-  - [5. Launch Dashboard](#5-launch-dashboard)  
-- [📊 Metrics](#-metrics)  
-- [⚖️ License](#️-license)  
 
 ---
 
-## 📖 Overview
+## Overview
 
 This repository demonstrates an end-to-end workflow for:
 
@@ -33,7 +20,7 @@ By combining accurate short-term forecasts with RL, you can intelligently dispat
 
 ---
 
-## ✨ Features
+## Features
 
 - **Data Loaders**  
   - `load_solar_data`, `load_load_data`, `load_weather_data`  
@@ -58,7 +45,7 @@ By combining accurate short-term forecasts with RL, you can intelligently dispat
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Clone & Install
 
@@ -103,13 +90,13 @@ Use the sidebar to tweak cycle_penalty & use_incentive, then Simulate to see:
     Cumulative reward
 ```
 
-##📊 Metrics
+## Metrics
 
     MAE / RMSE measure absolute and squared forecast errors.
 
     R² > 0.8 indicates the model explains over 80 % of variance—a strong fit for time series.
 
-⚖️ License
+## License
 
 This project is MIT-licensed. See LICENSE for details.
 

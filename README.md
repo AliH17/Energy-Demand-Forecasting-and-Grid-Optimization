@@ -101,8 +101,9 @@ Use the sidebar to tweak cycle_penalty & use_incentive, then Simulate to see:
     Net grid draw
 
     Cumulative reward
+```
 
-📊 Metrics
+##📊 Metrics
 
     MAE / RMSE measure absolute and squared forecast errors.
 
